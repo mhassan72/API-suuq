@@ -19,9 +19,9 @@ export default class User extends BaseModel {
         ':phone': phone,
       },
     };
-
     const result = await this.dynamoDb.query(params).promise();
-    return result.Items?.[0];
+    // Return the first item or undefined if no items are found
+    return result.Items?.[0] ?? undefined;
   }
 }
 
