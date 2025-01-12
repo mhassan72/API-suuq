@@ -1,15 +1,16 @@
-# Express TypeScript Authentication API
+# Suuq.io API
 
 ## Description
-This project is a RESTful API built using TypeScript and Express. 
-It includes user registration and authentication features, with secure password handling and JWT-based authentication.
+This project is a RESTful API for Suuq.io, an online marketplace. 
+It provides user registration, authentication, and dynamic functionality to support Suuq.io's marketplace features. 
+Built with TypeScript and Express, the API ensures clean code, scalability, and security.
 
 ## Features
 - User registration with hashed secrets (passwords)
-- JWT token generation and decoding
-- Structured codebase following OOP principles
-- Connection to DynamoDB via a reusable `BaseModel` class
-- Dynamic routing for scalability
+- JWT token-based authentication for secure access
+- Structured, reusable codebase using OOP principles
+- Connection to DynamoDB via a `BaseModel` class
+- Dynamic routing for modular and scalable API endpoints
 
 ## Prerequisites
 - Node.js (version 14 or later)
@@ -53,7 +54,7 @@ src
 ├── config
 │   └── AppConfig.ts      # Application configuration (e.g., environment variables)
 ├── controllers
-│   ├── AuthController.ts # Handles authentication logic
+│   ├── AuthController.ts # Handles user authentication logic
 │   └── BaseController.ts # Abstract class for controllers
 ├── middleware
 │   └── AuthMiddleware.ts # Middleware for protecting routes
