@@ -111,8 +111,22 @@ src
 - Place tests in the `tests` directory, mirroring the `src` folder structure 🗂️
 - Use descriptive test names and ensure high test coverage:
   ```typescript
-  describe('AuthController', () => {
-      it('should register a new user', async () => {
+    describe('BaseModel', () => {
+      const tableName = 'TestTable';
+      let baseModel: BaseModel;
+
+      // Before each test, initialize the mock and the model instance
+      beforeEach(() => {
+        AWSMock.setSDKInstance(AWS);  // Pass the full AWS SDK to the mock
+        baseModel = new BaseModel(tableName); // Initialize BaseModel with tableName
+      });
+
+      afterEach(() => {
+        AWSMock.restore();  // Restore original AWS SDK after each test
+      });
+
+      // Test: Create Item
+      it('should create an item in DynamoDB', async () => {
           // Test implementation
       });
   });
