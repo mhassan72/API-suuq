@@ -7,3 +7,5 @@ dist
 package-lock.json
 .git
 coverage
+
+*_schema.sample.json

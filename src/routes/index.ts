@@ -1,8 +1,8 @@
 // ./routes.ts
 import home from '../controllers/home';
-import AuthController from '../controllers/AuthController';
-
-const auth = new AuthController()
+import { auth } from '../controllers/AuthController';
+import { products } from '../controllers/ProductsController'
+import path from 'path';
 
 // Define dynamic routes
 const DynamicRoutes : any = [
@@ -20,6 +20,11 @@ const DynamicRoutes : any = [
         path: '/login',
         method: 'post',
         handler: auth.login
+    },
+    {
+        path:'/products',
+        method: 'get',
+        handler: products.all
     }
 ];
 

@@ -8,7 +8,7 @@ export default class AuthController {
   async register(req: Request, res: Response): Promise<void> {
     try {
       const { phone, secret, avatar_url } = req.body;
-
+      
       // Validate required fields
       if (!phone || !secret || !avatar_url) {
         res.status(400).json({ error: 'All fields are required: phone, secret, avatar_url' });
@@ -74,9 +74,17 @@ export default class AuthController {
       const payload = { phone: existingUser.phone };
       const token = await wt.encode(payload, '24h'); // Token expires in 24 hours
 
-      res.status(200).json({ message: 'Login successful', token });
+      res.status(200).json({ 
+        message: 'Login successful', 
+        user: {
+          id: existingUser.id,
+          phone: existingUser.phone,
+          avatar_url: existingUser.avatar_url
+        },token });
     } catch (error: any) {
       res.status(500).json({ error: 'An error occurred while logging in', details: error.message });
     }
   }
 }
+
+export const auth = new AuthController() 

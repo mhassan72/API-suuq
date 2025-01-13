@@ -20,6 +20,10 @@ export class EnvironmentManager {
     return this.getNumberEnv('PORT', 3000);
   }
 
+  public getTestPort(): number {
+    return this.getNumberEnv('TEST_PORT', 3001);
+  }
+
   public getJwtSecret(): string {
     return this.getEnv('JWT_SECRET', 'default_secret');
   }

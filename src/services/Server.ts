@@ -15,16 +15,16 @@ export class Server {
   private configureServer(): void {
     // Configuring app with middleware (from AppConfig)
     AppConfig.configure(this.app);
-
     // Setup dynamic routes
     const router = new Router(DynamicRoutes);
     this.app.use(router.getRouter());
   }
 
-  public start(): void {
+  public start(): any {
     const port = envManager.getPort();
-    this.app.listen(port, () => {
+    const server = this.app.listen(port, () => {
       console.log(`Server is running at http://localhost:${port}`);
     });
+    return server; // Return the server instance
   }
 }
