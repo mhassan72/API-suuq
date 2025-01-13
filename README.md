@@ -4,7 +4,7 @@ Welcome to Suuq.io API! 🚀 This documentation is designed to help both users a
 
 Suuq.io is an online marketplace designed to improve the economy and livelihood of the people. We make it easy as 1-2-3 for anyone to buy anything they wish! 🛒 This API is accompanied by a web and mobile app, each in their own repository.
 
-**Important:** Anything related to **[embeddings](https://github.com/mhassan72/sematic_search)** OR **semantic search** is not handled here. It will be managed in its own repository. For more information, visit [Semantic Search](https://github.com/mhassan72/sematic_search).
+**Important:** Anything related to **[embeddings](https://github.com/mhassan72/sematic_search)** OR **[semantic search](https://github.com/mhassan72/sematic_search)** is not handled here. It will be managed in its own repository.
 
 ## Table of Contents
 - [Introduction](#introduction)
