@@ -1,7 +1,7 @@
 // ./routes.ts
 import home from '../controllers/home';
 import { auth } from '../controllers/AuthController';
-import { products } from '../controllers/ProductsController'
+import { productsController } from '../controllers/ProductsController'
 import path from 'path';
 
 // Define dynamic routes
@@ -24,7 +24,12 @@ const DynamicRoutes : any = [
     {
         path:'/products',
         method: 'get',
-        handler: products.all
+        handler: productsController.getAll
+    },
+    {
+        path:'/product/:product_id',
+        method: 'get',
+        handler: productsController.getDetail
     }
 ];
 
