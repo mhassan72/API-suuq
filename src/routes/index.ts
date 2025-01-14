@@ -2,7 +2,7 @@
 import home from '../controllers/home';
 import { auth } from '../controllers/AuthController';
 import { productsController } from '../controllers/ProductsController'
-import path from 'path';
+import { searchController } from '../controllers/SearchController'
 
 // Define dynamic routes
 const DynamicRoutes : any = [
@@ -30,6 +30,11 @@ const DynamicRoutes : any = [
         path:'/product/:product_id',
         method: 'get',
         handler: productsController.getDetail
+    },
+    {
+        path:'/search/:search_term',
+        method: 'post',
+        handler: searchController.search
     }
 ];
 
