@@ -1,5 +1,4 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
-import cors from 'cors'
 import { envManager } from '../environment/EnvironmentManager';
 
 export class AppConfig {
@@ -13,7 +12,7 @@ export class AppConfig {
       app.use(AppConfig.debugMiddleware);
     }
 
-    app.use(cors<Request>())
+    // app.use(cors<Request>())
     app.use(express.json());
   }
 

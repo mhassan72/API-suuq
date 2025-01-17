@@ -3,7 +3,12 @@ import User from '../model/User';
 import WebToken from '../services/WebToken';
 import bcrypt from 'bcrypt';
 
-export default class AuthController {
+export default class AuthController  {
+
+  constructor() {
+    this.login = this.login.bind(this);
+  }
+
   // Register a new user
   async register(req: Request, res: Response): Promise<void> {
     try {
@@ -44,7 +49,8 @@ export default class AuthController {
 
   // Log in an existing user
   async login(req: Request, res: Response): Promise<void> {
-    try {
+    try {      
+
       const { phone, secret } = req.body;
 
       // Validate required fields
@@ -75,11 +81,11 @@ export default class AuthController {
       const token = await wt.encode(payload, '24h'); // Token expires in 24 hours
 
       res.status(200).json({ 
-        message: 'Login successful', 
+        message: 'Login successful',
         user: {
           id: existingUser.id,
           phone: existingUser.phone,
-          avatar_url: existingUser.avatar_url
+          avatar_url: existingUser.avatar_url,
         },token });
     } catch (error: any) {
       res.status(500).json({ error: 'An error occurred while logging in', details: error.message });

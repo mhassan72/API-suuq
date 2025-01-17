@@ -1,11 +1,6 @@
 import express, { Request, Response } from 'express';
-
 // Define a structure for dynamic routes
-interface RouteConfig {
-  path: string;
-  method: 'get' | 'post' | 'put' | 'delete';
-  handler: (req: Request, res: Response) => void;
-}
+import type { RouteConfig } from '../types'
 
 export class Router {
   private router: express.Router;
@@ -20,18 +15,19 @@ export class Router {
   private setUpRoutes(): void {
     // Loop through the routes array and dynamically create routes
     this.routes.forEach(route => {
+      const middlewares = route.middleware || [];
       switch (route.method) {
         case 'get':
-          this.router.get(route.path, route.handler);
+          this.router.get(route.path, ...middlewares, route.handler);
           break;
         case 'post':
-          this.router.post(route.path, route.handler);
+          this.router.post(route.path, ...middlewares, route.handler);
           break;
         case 'put':
-          this.router.put(route.path, route.handler);
+          this.router.put(route.path, ...middlewares, route.handler);
           break;
         case 'delete':
-          this.router.delete(route.path, route.handler);
+          this.router.delete(route.path, ...middlewares, route.handler);
           break;
       }
     });
