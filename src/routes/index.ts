@@ -26,23 +26,28 @@ const DynamicRoutes : RouteConfig[] = [
         handler: auth.login,
     },
     {
+        path:'/validate_token',
+        method: 'post',
+        handler: auth.validate_token
+    },
+    {
         path:'/products',
         method: 'get',
-        handler: productsController.getAll,
-        middleware: [authenticateRequest]
+        handler: productsController.getAll
     },
     {
         path:'/product/:product_id',
         method: 'get',
-        handler: productsController.getDetail,
-        middleware: [authenticateRequest]
+        handler: productsController.getDetail
     },
     {
         path:'/search/:search_term',
         method: 'post',
-        handler: searchController.search,
-        middleware: [authenticateRequest]
+        handler: searchController.search
     }
 ];
 
 export default DynamicRoutes;
+
+
+// middleware: [authenticateRequest]

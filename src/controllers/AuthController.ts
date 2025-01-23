@@ -9,6 +9,22 @@ export default class AuthController  {
     this.login = this.login.bind(this);
   }
 
+  async validate_token(req: Request, res: Response): Promise<void> {
+    try {
+      const { token } = req.body;
+      const wt = new WebToken();
+      
+      res.status(200).json({
+        isValid: await wt.validate(token)
+      })
+      
+    } catch (error) {
+      res.status(401).json({
+        isValid: false
+      })
+    }
+  }
+
   // Register a new user
   async register(req: Request, res: Response): Promise<void> {
     try {
