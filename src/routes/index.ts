@@ -1,9 +1,12 @@
 // ./routes.ts
 import home from '../controllers/home';
-import { auth } from '../controllers/AuthController';
+import { authController } from '../controllers/AuthController';
 import { productsController } from '../controllers/ProductsController'
 import { searchController } from '../controllers/SearchController'
 import {  authenticateRequest } from '../middlewares/Authenticate'
+import { favouriteController } from '../controllers/FavouriteController';
+import { storeController } from '../controllers/StoreController';
+import { fileUploadMiddleware } from '../middlewares/fileUpload';
 
 // import types
 import type { RouteConfig } from '../types'
@@ -18,17 +21,12 @@ const DynamicRoutes : RouteConfig[] = [
     {
         path: '/register',
         method: 'post',
-        handler: auth.register
+        handler: authController.register
     },
     {
         path: '/login',
         method: 'post',
-        handler: auth.login,
-    },
-    {
-        path:'/validate_token',
-        method: 'post',
-        handler: auth.validate_token
+        handler: authController.login,
     },
     {
         path:'/products',
@@ -44,6 +42,31 @@ const DynamicRoutes : RouteConfig[] = [
         path:'/search/:search_term',
         method: 'post',
         handler: searchController.search
+    },
+    // Favourites routes
+    {
+        path: '/favourites',
+        method: 'post',
+        handler: favouriteController.addToFavourites,
+        middleware: [authenticateRequest]
+    },
+    {
+        path: '/favourites/:userId',
+        method: 'get',
+        handler: favouriteController.list,
+        middleware: [authenticateRequest]
+    },
+    {
+        path: '/favourites/:id',
+        method: 'delete',
+        handler: favouriteController.remove,
+        middleware: [authenticateRequest]
+    },
+    {
+        path: '/upload',
+        method: 'post',
+        handler: storeController.uploadMedia,
+        middleware: [authenticateRequest,fileUploadMiddleware]
     }
 ];
 

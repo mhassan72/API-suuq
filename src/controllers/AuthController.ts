@@ -1,112 +1,98 @@
 import { Request, Response } from 'express';
-import User from '../model/User';
-import WebToken from '../services/WebToken';
-import bcrypt from 'bcrypt';
+import { AuthService } from '../services/AuthService';
+import  { AuthValidation }  from '../middlewares/AuthValidation';
 
-export default class AuthController  {
+export class AuthController {
+  private authService: AuthService;
 
   constructor() {
+    this.authService = new AuthService();
+    // Bind methods to maintain 'this' context
+    this.register = this.register.bind(this);
     this.login = this.login.bind(this);
+    this.validateToken = this.validateToken.bind(this);
   }
 
-  async validate_token(req: Request, res: Response): Promise<void> {
+  async validateToken(req: Request, res: Response): Promise<void> {
     try {
       const { token } = req.body;
-      const wt = new WebToken();
       
-      res.status(200).json({
-        isValid: await wt.validate(token)
-      })
-      
+      if (!token) {
+        res.status(400).json({ isValid: false, error: 'Token is required' });
+        return;
+      }
+
+      const isValid = await this.authService.validateToken(token);
+      res.status(200).json({ isValid });
     } catch (error) {
-      res.status(401).json({
-        isValid: false
-      })
+      res.status(401).json({ 
+        isValid: false,
+        error: 'Invalid token format'
+      });
     }
   }
 
-  // Register a new user
   async register(req: Request, res: Response): Promise<void> {
     try {
       const { phone, secret, avatar_url } = req.body;
+      const user = await this.authService.registerUser(phone, secret, avatar_url);
       
-      // Validate required fields
-      if (!phone || !secret || !avatar_url) {
-        res.status(400).json({ error: 'All fields are required: phone, secret, avatar_url' });
-        return;
-      }
-
-      const user = new User();
-
-      // Check if the user already exists
-      const existingUser = await user.findByPhone(phone);
-      if (existingUser) {
-        res.status(400).json({ error: 'User already exists' });
-        return;
-      }
-
-      // Hash the user's secret (password)
-      const hashedSecret = await bcrypt.hash(secret, 10);
-
-      // Save the user
-      const newUser = {
-        phone,
-        hashed_secret: hashedSecret,
-        avatar_url,
-      };
-
-      await user.create(newUser);
-
-      res.status(201).json({ message: 'User registered successfully', user: newUser });
+      res.status(201).json({ 
+        message: 'User registered successfully', 
+        user: {
+          id: user.id,
+          phone: user.phone,
+          avatar_url: user.avatar_url
+        }
+      });
     } catch (error: any) {
-      res.status(500).json({ error: 'An error occurred while registering the user', details: error.message });
+      const status = error.message === 'USER_EXISTS' ? 409 : 500;
+      const message = error.message === 'USER_EXISTS' 
+        ? 'User already exists' 
+        : 'Registration failed';
+
+      res.status(status).json({ error: message });
     }
   }
 
-  // Log in an existing user
   async login(req: Request, res: Response): Promise<void> {
-    try {      
-
+    try {
       const { phone, secret } = req.body;
-
-      // Validate required fields
-      if (!phone || !secret) {
-        res.status(400).json({ error: 'Phone and secret are required' });
-        return;
-      }
-
-      const user = new User();
-
-      // Find the user by phone
-      const existingUser = await user.findByPhone(phone);
-      if (!existingUser) {
-        res.status(404).json({ error: 'User not found' });
-        return;
-      }
-
-      // Compare secrets
-      const isMatch = await bcrypt.compare(secret, existingUser.hashed_secret);
-      if (!isMatch) {
-        res.status(401).json({ error: 'Invalid credentials' });
-        return;
-      }
-
-      // Generate a token
-      const wt = new WebToken();
-      const payload = { phone: existingUser.phone };
-      const token = await wt.encode(payload, '24h'); // Token expires in 24 hours
-
-      res.status(200).json({ 
+      const { user, token } = await this.authService.authenticateUser(phone, secret);
+      
+      res.status(200).json({
         message: 'Login successful',
         user: {
-          id: existingUser.id,
-          phone: existingUser.phone,
-          avatar_url: existingUser.avatar_url,
-        },token });
+          id: user.id,
+          phone: user.phone,
+          avatar_url: user.avatar_url,
+        },
+        token
+      });
     } catch (error: any) {
-      res.status(500).json({ error: 'An error occurred while logging in', details: error.message });
+      const status = this.getErrorStatus(error.message);
+      res.status(status).json({ 
+        error: this.getErrorMessage(error.message) 
+      });
     }
+  }
+
+  // Private helper methods
+  private getErrorStatus(errorCode: string): number {
+    const statusMap: Record<string, number> = {
+      'USER_NOT_FOUND': 404,
+      'INVALID_CREDENTIALS': 401
+    };
+    return statusMap[errorCode] || 500;
+  }
+
+  private getErrorMessage(errorCode: string): string {
+    const messageMap: Record<string, string> = {
+      'USER_NOT_FOUND': 'User not found',
+      'INVALID_CREDENTIALS': 'Invalid credentials'
+    };
+    return messageMap[errorCode] || 'Authentication failed';
   }
 }
 
-export const auth = new AuthController() 
+export const authController = new AuthController();
