@@ -1,5 +1,5 @@
 // ./routes.ts
-import home from '../controllers/home';
+import { home } from '../controllers/home';
 import { authController } from '../controllers/AuthController';
 import { productsController } from '../controllers/ProductsController'
 import { searchController } from '../controllers/SearchController'
@@ -7,6 +7,7 @@ import {  authenticateRequest } from '../middlewares/Authenticate'
 import { favouriteController } from '../controllers/FavouriteController';
 import { storeController } from '../controllers/StoreController';
 import { fileUploadMiddleware } from '../middlewares/fileUpload';
+import { chatController } from '../controllers/ChatController';
 
 // import types
 import type { RouteConfig } from '../types'
@@ -16,7 +17,12 @@ const DynamicRoutes : RouteConfig[] = [
     {
         path: '/',
         method: 'get',
-        handler: home
+        handler: home.home
+    },
+    {
+        path: '/browse',
+        method: 'get',
+        handler: home.browse
     },
     {
         path: '/register',
@@ -28,6 +34,7 @@ const DynamicRoutes : RouteConfig[] = [
         method: 'post',
         handler: authController.login,
     },
+    // products routes
     {
         path:'/products',
         method: 'get',
@@ -62,12 +69,25 @@ const DynamicRoutes : RouteConfig[] = [
         handler: favouriteController.remove,
         middleware: [authenticateRequest]
     },
+    // upload files   
     {
         path: '/upload',
         method: 'post',
         handler: storeController.uploadMedia,
         middleware: [authenticateRequest,fileUploadMiddleware]
+    },
+    // chat routes 
+    {
+        path: '/chats',
+        method: 'post',
+        handler: chatController.getAll
+    },
+    {
+        path: '/chat/:chat_id',
+        method: 'post',
+        handler: chatController.getDetail
     }
+
 ];
 
 export default DynamicRoutes;
